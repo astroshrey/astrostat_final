@@ -25,17 +25,18 @@ g.close()
 for key in all_stars:
     if math_params[key] is not None:
         #replacing Mcquillan data for Mathur data
-        all_stars[key][1] = math_params[key][1] #Teff
-        all_stars[key][2] = math_params[key][4] #logg
-        all_stars[key][3] = math_params[key][10] #mass
+        all_stars[key][0] = math_params[key][0] #Teff
+        all_stars[key][1] = math_params[key][3] #logg
+        all_stars[key][2] = math_params[key][9] #mass
         #adding the Mathur data for FeH, rad, and rho
-        all_stars[key][10] = math_params[key][7] #FeH
-        all_stars[key][11] = math_params[key][13] #rad
-        all_stars[key][12] = math_params[key][16] #rho
+        all_stars[key][10] = math_params[key][6] #FeH
+        all_stars[key][11] = math_params[key][12] #rad
+        all_stars[key][12] = math_params[key][15] #rho
 
 #now we can structure this all in arrays and write back out
 all_stars =[[key] + all_stars[key] for key in all_stars]
 
+print(all_stars[1])
 #writing out our cross-referenced text file
 f = open("crossref.txt", 'w')
 for arr in all_stars:
