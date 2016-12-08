@@ -36,7 +36,6 @@ for key in all_stars:
 #now we can structure this all in arrays and write back out
 all_stars =[[key] + all_stars[key] for key in all_stars]
 
-print(all_stars[1])
 #writing out our cross-referenced text file
 f = open("crossref.txt", 'w')
 for arr in all_stars:

@@ -16,8 +16,11 @@ Rper = data[:,6]
 FeH = data[:,11]
 rad = data[:,12]
 rho = data[:,13]
+L = np.log(((Teff/5780)**4)*(rad**2))
+
 df = pd.DataFrame({'Teff': Teff, 'logg': logg, 'mass': mass,\
-'log(Prot)': np.log(Prot), 'log(Rper)': np.log(Rper), 'Fe/H': FeH, 'rad': rad, 'rho': rho})
+'log(Prot)': np.log(Prot), 'log(Rper)': np.log(Rper), 'Fe/H': FeH,\
+'rad': rad, 'rho': rho, 'L': L})
 ax1 = pd.scatter_matrix(df,s = .2, alpha = 0.2,  diagonal = 'kde')
 
 midmass = np.median(mass)
@@ -31,21 +34,25 @@ stdrho = np.std(rho)
 
 for i, axs in enumerate(ax1):
     for j, ax in enumerate(axs):
-        if i != j and i == 4:
-            ax.set_ylim((midlogg-stdlogg, midlogg+stdlogg))
+        if i != j and i == 1:
+            ax.set_ylim((-3, 1.6))
         if i != j and i == 5:
-            ax.set_ylim((0, midmass+stdmass))
+            ax.set_ylim((midlogg-stdlogg, midlogg+stdlogg))
         if i != j and i == 6:
-            ax.set_ylim((midrad-2*stdrad, midrad+2*stdrad))
+            ax.set_ylim((0, midmass+stdmass))
         if i != j and i == 7:
+            ax.set_ylim((midrad-2*stdrad, midrad+2*stdrad))
+        if i != j and i == 8:
             ax.set_ylim((0, midrho+stdrho))
-        if j == 4:
-            ax.set_xlim((midlogg-stdlogg, midlogg+stdlogg))
+        if j == 1:
+            ax.set_xlim((-3,1.6))
         if j == 5:
-            ax.set_xlim((0, midmass+stdmass))
+            ax.set_xlim((midlogg-stdlogg, midlogg+stdlogg))
         if j == 6:
-            ax.set_xlim((midrad-2*stdrad, midrad+2*stdrad))
+            ax.set_xlim((0, midmass+stdmass))
         if j == 7:
+            ax.set_xlim((midrad-2*stdrad, midrad+2*stdrad))
+        if j == 8:
             ax.set_xlim((0, midrho+stdrho))
 
 plt.savefig(output_dir+"diagnostic", format='png')
