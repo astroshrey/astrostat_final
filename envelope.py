@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from pylab import rcParams
-rcParams['figure.figsize'] = 10,10
+rcParams['figure.figsize'] = 6, 6
 
 output_dir = "simple_plots/"
 data = np.genfromtxt("crossref.txt")
@@ -42,7 +42,7 @@ def movingmedian(x,window):
         i += 1
     return [down, smoothed, up]
 
-window = 800
+window = 2000
 down, smooth, up = movingmedian(df['Teff'], window)
 plt.plot(df['Prot'][window/2:-window/2], smooth, alpha = 0.5, c = 'b')
 plt.plot(df['Prot'][window/2:-window/2], down, alpha = 0.5, c = 'r')
@@ -56,3 +56,4 @@ plt.ylabel(r'T$_{eff}$ [K]')
 plt.ylim(3500,7000)
 plt.xlim(.2, 90)
 plt.savefig(output_dir+"envelope_1", format='png')
+print("envelope plot made")
