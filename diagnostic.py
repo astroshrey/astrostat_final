@@ -34,19 +34,19 @@ for i, axs in enumerate(ax1):
         if i != j and i == 4:
             ax.set_ylim((midlogg-stdlogg, midlogg+stdlogg))
         if i != j and i == 5:
-            ax.set_ylim((midmass-stdmass, midmass+stdmass))
+            ax.set_ylim((0, midmass+stdmass))
         if i != j and i == 6:
-            ax.set_ylim((midrad-stdrad, midrad+stdrad))
+            ax.set_ylim((midrad-2*stdrad, midrad+2*stdrad))
         if i != j and i == 7:
-            ax.set_ylim((midrho-stdrho, midrho+stdrho))
+            ax.set_ylim((0, midrho+stdrho))
         if j == 4:
             ax.set_xlim((midlogg-stdlogg, midlogg+stdlogg))
         if j == 5:
-            ax.set_xlim((midmass-stdmass, midmass+stdmass))
+            ax.set_xlim((0, midmass+stdmass))
         if j == 6:
-            ax.set_xlim((midrad-stdrad, midrad+stdrad))
+            ax.set_xlim((midrad-2*stdrad, midrad+2*stdrad))
         if j == 7:
-            ax.set_xlim((midrho-stdrho, midrho+stdrho))
+            ax.set_xlim((0, midrho+stdrho))
 
 plt.savefig(output_dir+"diagnostic", format='png')
 plt.gcf().clear()
