@@ -133,4 +133,54 @@ def cross_validate(xtra,ytra,xval,yval, to_plot = False):
             chisquared(residuals2, yval),\
             chisquared(residuals3, yval)])
 
-print cross_validate(x[200:], up[200:], x[:200], up[:200], to_plot = True)
+def k_folds(data,k, to_plot = False):
+    """k-folds cross-validation function. The dataset is randomly shuffled
+    and chunked into k nearly-equal chunks of size floor(len(dat)/k). I say
+    nearly-equal because the final chunk will pick up any remaining points; for
+    instance, a 5-fold of the 241 point dataset will have 48,48,48,48,49 points
+    in each validation set. Again the actual cross validation work is
+    done by cross_validate above. This function returns the average
+    chi-squared over all k folds.
+
+    Keyword Arguments:
+    k -- the number of folds
+    to_plot -- whether or not to plot the models on the data.
+
+    Note: the models actually look *really* messy and I haven't
+    figured out a way to make it look nice given the large volume
+    of data, so I have set the default for to_plot to false.
+    """
+
+    i = 0
+    chunk_size = len(data)/k
+    num_chunks = 0
+    summed = np.array([0.0,0.0,0.0,0.0])
+
+    while i < len(data):
+        #the following if-statement is to cover the edge case of the
+        #last bucket picking up remaining points.
+        if len(data) - i < 2*chunk_size:
+            dataval = data[i:]
+            datatra = data[:i]
+            xtra = np.array(datatra[:,0].T)[0]
+            ytra = np.array(datatra[:,1].T)[0]
+            xval = np.array(dataval[:,0].T)[0]
+            yval = np.array(dataval[:,1].T)[0]
+            summed += cross_validate(xtra, ytra, xval, yval, to_plot)
+            num_chunks += 1
+            break
+
+        else:
+            dataval = data[i:i+chunk_size]
+            datatra = np.vstack((data[:i],data[i+chunk_size:]))
+            xtra = np.array(datatra[:,0].T)[0]
+            ytra = np.array(datatra[:,1].T)[0]
+            xval = np.array(dataval[:,0].T)[0]
+            yval = np.array(dataval[:,1].T)[0]
+            summed += cross_validate(xtra, ytra, xval, yval, to_plot)
+            i += len(data)/k
+            num_chunks += 1
+    return summed / num_chunks
+
+data = np.transpose(np.matrix([x,up]))
+print k_folds(data, 5)
