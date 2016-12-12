@@ -39,8 +39,9 @@ all_stars =[[key] + all_stars[key] for key in all_stars]
 #writing out our cross-referenced text file
 f = open("crossref.txt", 'w')
 for arr in all_stars:
-    for element in arr:
-        f.write(element)
-        f.write(' ')
-    f.write('\n')
+    if float(arr[3]) < 1: #mass cutoff for giants
+        for element in arr:
+            f.write(element)
+            f.write(' ')
+        f.write('\n')
 f.close()

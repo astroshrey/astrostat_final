@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from pylab import rcParams
-rcParams['figure.figsize'] = 10,10
+rcParams['figure.figsize'] = 7.5, 7.5
 
 output_dir = "simple_plots/"
 data = np.genfromtxt("crossref.txt")
@@ -39,7 +39,7 @@ for i, axs in enumerate(ax1):
         if i != j and i == 5:
             ax.set_ylim((midlogg-stdlogg, midlogg+stdlogg))
         if i != j and i == 6:
-            ax.set_ylim((0, midmass+stdmass))
+            ax.set_ylim((0, 1))
         if i != j and i == 7:
             ax.set_ylim((midrad-2*stdrad, midrad+2*stdrad))
         if i != j and i == 8:
@@ -49,7 +49,7 @@ for i, axs in enumerate(ax1):
         if j == 5:
             ax.set_xlim((midlogg-stdlogg, midlogg+stdlogg))
         if j == 6:
-            ax.set_xlim((0, midmass+stdmass))
+            ax.set_xlim((0, 1))
         if j == 7:
             ax.set_xlim((midrad-2*stdrad, midrad+2*stdrad))
         if j == 8:
@@ -113,5 +113,4 @@ plt.xlim(0.2, 90)
 plt.ylabel(r'Density')
 plt.xlabel(r'P$_{rot}$ [days]')
 plt.savefig(output_dir+"P_rho", format='png')
-plt.gcf().clear()
 """
