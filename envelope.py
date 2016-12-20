@@ -47,7 +47,6 @@ def movingmedian(x,window):
 window = 2000
 down, smooth, up = movingmedian(df['Teff'], window)
 x = np.array(df['Prot'][window/2:-window/2])
-unc = np.array(df['Tunc'][window/2:-window/2])
 print min(x), max(x)
 plt.plot(x, smooth, alpha = 0.5, c = 'y')
 plt.plot(x, down, alpha = 0.5, c = 'r')
@@ -80,7 +79,7 @@ def chisquared(res,err):
         chi2 += (res[i]/err[i])**2
     return chi2
 
-def cross_validate(xtra,ytra,ytraunc,xval,yval,yvalunc, to_plot = False):
+def cross_validate(xtra,ytra,xval,yval, to_plot = False):
     """Trains 0th order, 1st order, 2nd order, and 3rd order polynomials
         on training data, checks them against validation data, and returns
         a 4-element array containing the chi^2 for each model.
@@ -94,10 +93,10 @@ def cross_validate(xtra,ytra,ytraunc,xval,yval,yvalunc, to_plot = False):
 
     """
     ##training each model##
-    M0 = np.poly1d(np.polyfit(xtra, ytra, w = 1/ytraunc, deg = 0))
-    M1 = np.poly1d(np.polyfit(xtra, ytra, w = 1/ytraunc, deg = 1))
-    M2 = np.poly1d(np.polyfit(xtra, ytra, w = 1/ytraunc, deg = 2))
-    M3 = np.poly1d(np.polyfit(xtra, ytra, w = 1/ytraunc, deg = 3))
+    M0 = np.poly1d(np.polyfit(xtra, ytra, deg = 0))
+    M1 = np.poly1d(np.polyfit(xtra, ytra, deg = 1))
+    M2 = np.poly1d(np.polyfit(xtra, ytra, deg = 2))
+    M3 = np.poly1d(np.polyfit(xtra, ytra, deg = 3))
 
     ##validating each model by finding chi2##
     residuals0 = [yval[i] - M0(xval[i]) for i in range(len(xval))]
@@ -131,10 +130,10 @@ def cross_validate(xtra,ytra,ytraunc,xval,yval,yvalunc, to_plot = False):
 
 
     #getting our chi-squares
-    return np.array([chisquared(residuals0, yvalunc),\
-            chisquared(residuals1, yvalunc),\
-            chisquared(residuals2, yvalunc),\
-            chisquared(residuals3, yvalunc)])
+    return np.array([chisquared(residuals0, yval),\
+            chisquared(residuals1, yval),\
+            chisquared(residuals2, yval),\
+            chisquared(residuals3, yval)])
 
 def k_folds(data,k, to_plot = False):
     """k-folds cross-validation function. The dataset is randomly shuffled
@@ -167,11 +166,9 @@ def k_folds(data,k, to_plot = False):
             datatra = data[:i]
             xtra = np.array(datatra[:,0].T)[0]
             ytra = np.array(datatra[:,1].T)[0]
-            ytraunc = np.array(datatra[:,2].T)[0]
             xval = np.array(dataval[:,0].T)[0]
             yval = np.array(dataval[:,1].T)[0]
-            yvalunc = np.array(dataval[:,2].T)[0]
-            summed += cross_validate(xtra, ytra, ytraunc, xval, yval, yvalunc, to_plot)
+            summed += cross_validate(xtra, ytra, xval, yval, to_plot)
             num_chunks += 1
             break
 
@@ -180,27 +177,24 @@ def k_folds(data,k, to_plot = False):
             datatra = np.vstack((data[:i],data[i+chunk_size:]))
             xtra = np.array(datatra[:,0].T)[0]
             ytra = np.array(datatra[:,1].T)[0]
-            ytraunc = np.array(datatra[:,2].T)[0]
             xval = np.array(dataval[:,0].T)[0]
             yval = np.array(dataval[:,1].T)[0]
-            yvalunc = np.array(dataval[:,2].T)[0]
-            summed += cross_validate(xtra, ytra, ytraunc, xval, yval, yvalunc, to_plot)
+            summed += cross_validate(xtra, ytra, xval, yval, to_plot)
             i += len(data)/k
             num_chunks += 1
     x = np.array(data[:,0].T)[0]
     y = np.array(data[:,1].T)[0]
-    yerr = np.array(data[:,2].T)[0]
 
-    models = [np.poly1d(np.polyfit(x, y, w = 1/yerr, deg = 0)) \
-    , np.poly1d(np.polyfit(x, y, w = 1/yerr, deg = 1)) \
-    , np.poly1d(np.polyfit(x, y, w = 1/yerr, deg = 2)) \
-    , np.poly1d(np.polyfit(x, y, w = 1/yerr, deg = 3))]
+    models = [np.poly1d(np.polyfit(x, y, deg = 0)) \
+    , np.poly1d(np.polyfit(x, y, deg = 1)) \
+    , np.poly1d(np.polyfit(x, y, deg = 2)) \
+    , np.poly1d(np.polyfit(x, y, deg = 3))]
     avg = summed/num_chunks
     print avg
     return models[np.argmin(avg)]
 
-data = np.transpose(np.matrix([x,up,unc]))
+data = np.transpose(np.matrix([x,up]))
 print k_folds(data, 100)
 
-data = np.transpose(np.matrix([x,down,unc]))
+data = np.transpose(np.matrix([x,down]))
 print k_folds(data, 100)
