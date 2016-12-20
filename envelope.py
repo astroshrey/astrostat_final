@@ -1,11 +1,18 @@
 #!/Users/Shrey/anaconda2/bin/python
 
+##########################################
+#Shreyas Vissapragada
+#sv2421
+#First envelope fit - between Teff and Prot
+##########################################
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from pylab import rcParams
 rcParams['figure.figsize'] = 6, 6
 
+#reading in data
 output_dir = "simple_plots/"
 data = np.genfromtxt("crossref.txt")
 Teff = data[:,1]
@@ -16,14 +23,16 @@ Rper = data[:,6]
 FeH = data[:,11]
 rad = data[:,12]
 rho = data[:,13]
-unc = data[:,14]
 df = pd.DataFrame({'Teff': Teff, 'logg': logg, 'mass': mass,\
-'Prot': Prot, 'Rper': Rper, 'Fe/H': FeH, 'rad': rad, 'rho': rho, 'Tunc': unc})
+'Prot': Prot, 'Rper': Rper, 'Fe/H': FeH, 'rad': rad, 'rho': rho})
 df.sort_values(by = 'Prot', inplace = True)
 df= df[df["Prot"] < 50]
 
+#getting the 5th and 95th percentiles
 def movingmedian(x,window):
-    """Calculates a smoothed function for outlier rejection based on a moving median.
+    """
+    Calculates a smoothed function for outlier rejection based on a moving median.
+    This version also calculates moving 5th and 95th percentiles.
 
     Keyword Arguments:
     x -- a 1d dataset to perform the moving median on
@@ -48,6 +57,8 @@ window = 2000
 down, smooth, up = movingmedian(df['Teff'], window)
 x = np.array(df['Prot'][window/2:-window/2])
 print min(x), max(x)
+
+#plotting the smoothed percentiles and data
 plt.plot(x, smooth, alpha = 0.5, c = 'y')
 plt.plot(x, down, alpha = 0.5, c = 'r')
 plt.plot(x, up, alpha = 0.5,c = 'r')
@@ -63,11 +74,12 @@ plt.savefig(output_dir+"envelope_1.png", format='png')
 print("envelope plot made")
 
 
-#We can first write a generic cross-validation function that uses a
+#Now we write a generic cross-validation function that uses a
 #chisquared helper function
 
 def chisquared(res,err):
-    """Calculates the chi^2 for given residuals and errors.
+    """
+    Calculates the chi^2 for given residuals and errors.
     This is a helper function for cross_validate below.
 
     Keyword Arguments:
@@ -80,9 +92,10 @@ def chisquared(res,err):
     return chi2
 
 def cross_validate(xtra,ytra,xval,yval, to_plot = False):
-    """Trains 0th order, 1st order, 2nd order, and 3rd order polynomials
-        on training data, checks them against validation data, and returns
-        a 4-element array containing the chi^2 for each model.
+    """
+    Trains 0th order, 1st order, 2nd order, and 3rd order polynomials
+    on training data, checks them against validation data, and returns
+    a 4-element array containing the chi^2 for each model.
 
     Keyword Arguments:
     xtra -- the x training dataset
@@ -90,7 +103,6 @@ def cross_validate(xtra,ytra,xval,yval, to_plot = False):
     xval -- the x validation dataset
     yval -- the y validation dataset
     to_plot -- whether or not to plot the models on the data.
-
     """
     ##training each model##
     M0 = np.poly1d(np.polyfit(xtra, ytra, deg = 0))
@@ -104,7 +116,7 @@ def cross_validate(xtra,ytra,xval,yval, to_plot = False):
     residuals2 = [yval[i] - M2(xval[i]) for i in range(len(xval))]
     residuals3 = [yval[i] - M3(xval[i]) for i in range(len(xval))]
 
-    #plotting
+    #plotting if necessary
     if to_plot:
         allx = np.array(sorted(list(xval) + list(xtra)))
         fn0 = [M0(val) for val in allx]
@@ -136,21 +148,18 @@ def cross_validate(xtra,ytra,xval,yval, to_plot = False):
             chisquared(residuals3, yval)])
 
 def k_folds(data,k, to_plot = False):
-    """k-folds cross-validation function. The dataset is randomly shuffled
-    and chunked into k nearly-equal chunks of size floor(len(dat)/k). I say
-    nearly-equal because the final chunk will pick up any remaining points; for
-    instance, a 5-fold of the 241 point dataset will have 48,48,48,48,49 points
-    in each validation set. Again the actual cross validation work is
-    done by cross_validate above. This function returns the average
-    chi-squared over all k folds.
+    """
+    k-folds cross-validation function. The dataset is chunked into k nearly-equal
+    chunks of size floor(len(dat)/k). I say nearly-equal because the final
+    chunk will pick up any remaining points; for instance, a 5-fold of a 241 point
+    dataset will have 48,48,48,48,49 points in each validation set. Again the 
+    actual cross validation work is done by cross_validate above. This
+    function returns the average chi-squared over all k folds.
 
     Keyword Arguments:
+    data -- the data to cross validate
     k -- the number of folds
     to_plot -- whether or not to plot the models on the data.
-
-    Note: the models actually look *really* messy and I haven't
-    figured out a way to make it look nice given the large volume
-    of data, so I have set the default for to_plot to false.
     """
 
     i = 0
@@ -193,8 +202,10 @@ def k_folds(data,k, to_plot = False):
     print avg
     return models[np.argmin(avg)]
 
+
+
+##performing kfold cross val based polynomial model selection on our data
 data = np.transpose(np.matrix([x,up]))
 print k_folds(data, 100)
-
 data = np.transpose(np.matrix([x,down]))
 print k_folds(data, 100)
