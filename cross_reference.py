@@ -7,7 +7,7 @@ f = open(mcq_file, "r")
 all_stars = {}
 for line in f:
     data = line.split()
-    all_stars[data[0]] = data[1:] + [0,0,0]
+    all_stars[data[0]] = data[1:] + [0,0,0,0]
 f.close()
 
 
@@ -32,6 +32,8 @@ for key in all_stars:
         all_stars[key][10] = math_params[key][6] #FeH
         all_stars[key][11] = math_params[key][12] #rad
         all_stars[key][12] = math_params[key][15] #rho
+        #adding temperature errors
+        all_stars[key][13] = str(max([float(math_params[key][2]), float(math_params[key][3])]))
 
 #now we can structure this all in arrays and write back out
 all_stars =[[key] + all_stars[key] for key in all_stars]
