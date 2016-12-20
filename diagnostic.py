@@ -1,11 +1,19 @@
 #!/Users/Shrey/anaconda2/bin/python
 
+##########################################
+#Shreyas Vissapragada
+#sv2421
+#Creating the diagnostic plot matrix
+#for further inspection for trends
+##########################################
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from pylab import rcParams
 rcParams['figure.figsize'] = 7.5, 7.5
 
+#reading in data from the cross-refd dataset
 output_dir = "simple_plots/"
 data = np.genfromtxt("crossref.txt")
 Teff = data[:,1]
@@ -16,12 +24,17 @@ Rper = data[:,6]
 FeH = data[:,11]
 rad = data[:,12]
 rho = data[:,13]
-L = np.log(((Teff/5780)**4)*(rad**2))
+L = np.log(((Teff/5780)**4)*(rad**2)) #calculated parameter
 
 df = pd.DataFrame({'Teff': Teff, 'logg': logg, 'mass': mass,\
 'log(Prot)': np.log(Prot), 'log(Rper)': np.log(Rper), 'Fe/H': FeH,\
 'rad': rad, 'rho': rho, 'L': L})
+
+#making the plot matrix
 ax1 = pd.scatter_matrix(df,s = .2, alpha = 0.2,  diagonal = 'kde')
+
+
+#from here on out this is just messing around with plt to set plotting limits
 
 midmass = np.median(mass)
 stdmass = np.std(mass)
@@ -56,61 +69,3 @@ for i, axs in enumerate(ax1):
             ax.set_xlim((0, midrho+stdrho))
 
 plt.savefig(output_dir+"diagnostic", format='png')
-plt.gcf().clear()
-print "diagnostic made"
-"""
-plt.scatter(Prot, Teff, s = 2, alpha = 0.5, color = 'k')
-plt.xscale('log')
-plt.ylim(3000,7000)
-plt.xlim(0.2, 90)
-plt.ylabel(r'T$_{eff}$ [K]')
-plt.xlabel(r'P$_{rot}$ [days]')
-plt.savefig(output_dir+"P_Teff", format='png')
-plt.gcf().clear()
-
-plt.scatter(Prot, logg, s = 2, alpha = 0.5, color = 'k')
-plt.xscale('log')
-#plt.ylim(3000,7000)
-plt.xlim(0.2, 90)
-plt.ylabel(r'log g')
-plt.xlabel(r'P$_{rot}$ [days]')
-plt.savefig(output_dir+"P_logg", format='png')
-plt.gcf().clear()
-
-
-plt.scatter(Prot, mass, s = 2, alpha = 0.5, color = 'k')
-plt.xscale('log')
-plt.yscale('log')
-#plt.ylim(3000,7000)
-plt.xlim(0.2, 90)
-plt.ylabel(r'Mass [M$_{sun}$]')
-plt.xlabel(r'P$_{rot}$ [days]')
-plt.savefig(output_dir+"P_mass", format='png')
-plt.gcf().clear()
-
-plt.scatter(Prot, FeH, s = 2, alpha = 0.5, color = 'k')
-plt.xscale('log')
-plt.ylim(-1.5,.7)
-plt.xlim(0.2, 90)
-plt.ylabel(r'Fe/H')
-plt.xlabel(r'P$_{rot}$ [days]')
-plt.savefig(output_dir+"P_FeH", format='png')
-plt.gcf().clear()
-
-plt.scatter(Prot, rad, s = 2, alpha = 0.5, color = 'k')
-plt.xscale('log')
-#plt.ylim(3000,7000)
-plt.xlim(0.2, 90)
-plt.ylabel(r'Radius')
-plt.xlabel(r'P$_{rot}$ [days]')
-plt.savefig(output_dir+"P_rad", format='png')
-plt.gcf().clear()
-
-plt.scatter(Prot, rho, s = 2, alpha = 0.5, color = 'k')
-plt.xscale('log')
-#plt.ylim(3000,7000)
-plt.xlim(0.2, 90)
-plt.ylabel(r'Density')
-plt.xlabel(r'P$_{rot}$ [days]')
-plt.savefig(output_dir+"P_rho", format='png')
-"""
