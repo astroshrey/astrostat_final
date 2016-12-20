@@ -68,4 +68,4 @@ for i, axs in enumerate(ax1):
         if j == 8:
             ax.set_xlim((0, midrho+stdrho))
 
-plt.savefig(output_dir+"diagnostic", format='png')
+plt.savefig(output_dir+"diagnostic.png", format='png')
