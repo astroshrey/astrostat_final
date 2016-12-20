@@ -1,5 +1,12 @@
 #!/Users/Shrey/anaconda2/bin/python
 
+##########################################
+#Shreyas Vissapragada
+#sv2421
+#Cross reffing the McQuillan and Mathur
+#datasets and writing it out
+##########################################
+
 #first, we read in the McQuillan data into a dictionary
 mcq_file = "McQuillan_data/McQuillan.dat"
 f = open(mcq_file, "r")
