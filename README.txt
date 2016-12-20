@@ -4,6 +4,10 @@ Here, you can find the running sequence to emulate how I did this project.
 NOTE: you will probably need to change the line at the top of each python script
 if you use ./[scriptname] like I do.
 
+NOTE2: All of the plots created by the scripts in this repo are sort of standard
+matplotlib plots. I went back and refactored things in seaborn as I always do for
+presentation and write-up purposes.
+
 1. Run cross_reference.py to cross-ref the McQuillan dataset with the Mathur dataset and
 institute the mass cutoff. This script populates crossref.txt with an new table. This
 file is well commented.
